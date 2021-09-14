@@ -1,6 +1,5 @@
 <template>
   <div class="row mt-5">
-    {{ sortingAttributeName }}
     <div
       class="col-md-3 mb-5 me-3 border rounded"
       v-for="(user, index) in usersList"
@@ -49,10 +48,11 @@
 import axios from "axios";
 export default {
   name: "UserLists",
-  props: ["selectedDates", "sortingAttributeName"],
+  props: ["selectedDates"],
   data() {
     return {
       usersList: [],
+      currentSortingInfo: { sortByAttribute: "", sortOrder: "" },
     };
   },
   watch: {
@@ -94,13 +94,31 @@ export default {
       this.usersList = this.usersList.filter((e) => e.uid === 1);
     },
     sort: function (sortInfo) {
-      let currentSortingAttribute = sortInfo.sortBy;
-      console.log(sortInfo);
-      console.log(this.usersList);
-      this.friends = this.usersList.sort(
-        (a, b) => a.twubric.friends - b.twubric.friends
-      );
-      console.log(a);
+      this.currentSortingInfo["sortByAttribute"] = sortInfo.sortBy;
+      this.currentSortingInfo["sortOrder"] = sortInfo.sortOrder;
+      if (this.currentSortingInfo["sortByAttribute"] === "twubric score")
+        this.currentSortingInfo["sortByAttribute"] = "total";
+      if (this.currentSortingInfo["sortOrder"] === "asc") {
+        this.usersList.sort(
+          (a, b) =>
+            a.twubric[this.currentSortingInfo["sortByAttribute"]] -
+            b.twubric[this.currentSortingInfo["sortByAttribute"]]
+        );
+      } else if (this.currentSortingInfo["sortOrder"] === "desc") {
+        this.usersList.sort(
+          (a, b) =>
+            b.twubric[this.currentSortingInfo["sortByAttribute"]] -
+            a.twubric[this.currentSortingInfo["sortByAttribute"]]
+        );
+      } else {
+        axios
+          .get(
+            `https://gist.githubusercontent.com/pandemonia/21703a6a303e0487a73b2610c8db41ab/raw/9667fc19a0f89193e894da7aaadf6a4b7758b45e/twubric.json`
+          )
+          .then((response) => {
+            this.usersList = response.data;
+          });
+      }
     },
   },
 };

@@ -35,7 +35,6 @@
       <user-lists
         :selectedDates="selectedDates"
         v-model="selectedDates.endDate"
-        :sortingAttributeName="sortingAttributeName"
         ref="usersList"
       ></user-lists>
     </div>
@@ -53,7 +52,8 @@ export default {
       attributes: ["Twubric Score", "Friends", "Influence", "Chirpiness"],
       selectedDates: { startDate: "", endDate: "" },
       endDateDisabled: true,
-      sortingAttributeName: "",
+
+      sortingInfo: { sortBy: "", sortOrder: "" },
     };
   },
   methods: {
@@ -62,19 +62,24 @@ export default {
     },
     sortUserLists: function (name) {
       name = name.toLowerCase();
-      this.sortingAttributeName = name;
-      let sortInfo = { sortOrder: "asc", sortBy: name };
-      /* alert(name); */
-      this.$refs.usersList.sort(sortInfo);
+      if (
+        this.sortingInfo["sortBy"] == name &&
+        this.sortingInfo["sortOrder"] == "asc"
+      ) {
+        this.sortingInfo["sortOrder"] = "desc";
+      } else if (
+        this.sortingInfo["sortBy"] == name &&
+        this.sortingInfo["sortOrder"] == "desc"
+      ) {
+        this.sortingInfo["sortBy"] = "";
+        this.sortingInfo["sortOrder"] = "";
+      } else {
+        this.sortingInfo["sortBy"] = name;
+        this.sortingInfo["sortOrder"] = "asc";
+      }
+      this.$refs.usersList.sort(this.sortingInfo);
     },
   },
-  /*  created() {
-    axios
-      .get(
-        `https://gist.githubusercontent.com/pandemonia/21703a6a303e0487a73b2610c8db41ab/raw/9667fc19a0f89193e894da7aaadf6a4b7758b45e/twubric.json`
-      )
-      .then((res) => console.log(res.data));
-  }, */
 };
 </script>
 <style scoped>
