@@ -1,33 +1,34 @@
 <template>
   <div class="row mt-5">
+    {{ fetchUsersList }}
     <div
-      class="col-md-3 mb-5 me-3 border rounded"
+      class="col-lg-4 col-md-6 mb-3 spacing"
       v-for="(user, index) in usersList"
       :key="index"
     >
-      <div class="row">
+      <div class="row border rounded">
         <div class="col-9 user-name p-1">
           <span>{{ user.username }}</span>
         </div>
-        <div class="col-3 total-score text-end">
+        <div class="col-3 total-score text-end pt-1">
           <span>{{ user.twubric.total }}</span>
         </div>
       </div>
       <div class="row attributes">
         <div class="col-4 text-center border">
           {{ user.twubric.friends }}
-          <div>Friends</div>
+          <div class="text-muted">Friends</div>
         </div>
         <div class="col-4 text-center border">
           {{ user.twubric.influence }}
-          <div>Influence</div>
+          <div class="text-muted">Influence</div>
         </div>
         <div class="col-4 text-center border">
           {{ user.twubric.chirpiness }}
-          <div>Chirpiness</div>
+          <div class="text-muted">Chirpiness</div>
         </div>
       </div>
-      <div class="row">
+      <div class="row border rounded">
         <div class="col-4 join-date text-center">
           {{ user.join_date | unixTostandardDateFormat }}
         </div>
@@ -40,12 +41,12 @@
         </div>
       </div>
     </div>
+
     <!-- <div>No User Found!</div> -->
   </div>
 </template>
 
 <script>
-import axios from "axios";
 export default {
   name: "UserLists",
   props: ["selectedDates"],
@@ -71,27 +72,44 @@ export default {
       return standardDateFormat;
     },
   },
-  created() {
-    this.fetchUsersList();
+  computed: {
+    fetchUsersList: function () {
+      this.usersList = this.$store.getters.fetchUsersList;
+      /* return this.usersList; */
+    },
   },
   methods: {
-    fetchUsersList: function () {
-      axios
-        .get(
-          `https://gist.githubusercontent.com/pandemonia/21703a6a303e0487a73b2610c8db41ab/raw/9667fc19a0f89193e894da7aaadf6a4b7758b45e/twubric.json`
-        )
-        .then((response) => {
-          this.usersList = response.data;
-        });
-    },
     removeUserFromList: function (userId) {
       let index = this.usersList.findIndex((element) => element.uid === userId);
+      let name = this.usersList[index].username;
       this.usersList.splice(index, 1);
+      this.$toasted.show(`User "${name}" has been removed successfully!`, {
+        duration: 1500,
+        type: "success",
+      });
     },
     applyDatesFilter: function () {
       let startDateUnixTimestamp =
         new Date(this.selectedDates.startDate).getTime() / 1000;
-      this.usersList = this.usersList.filter((e) => e.uid === 1);
+      startDateUnixTimestamp = startDateUnixTimestamp - 32880;
+      let endDateUnixTimestamp =
+        new Date(this.selectedDates.endDate).getTime() / 1000;
+      endDateUnixTimestamp = endDateUnixTimestamp - 32880;
+      console.log(startDateUnixTimestamp);
+      console.log(endDateUnixTimestamp);
+      if (startDateUnixTimestamp && endDateUnixTimestamp) {
+        alert("apply");
+        this.usersList = this.usersList.filter((e) => {
+          return (
+            e.join_date >= startDateUnixTimestamp &&
+            e.join_date <= endDateUnixTimestamp
+          );
+        });
+      } /*  else if (!(startDateUnixTimestamp && endDateUnixTimestamp));
+      {
+        alert("h");
+        this.usersList = this.$store.getters.fetchUsersList;
+      } */
     },
     sort: function (sortInfo) {
       this.currentSortingInfo["sortByAttribute"] = sortInfo.sortBy;
@@ -111,21 +129,22 @@ export default {
             a.twubric[this.currentSortingInfo["sortByAttribute"]]
         );
       } else {
-        axios
-          .get(
-            `https://gist.githubusercontent.com/pandemonia/21703a6a303e0487a73b2610c8db41ab/raw/9667fc19a0f89193e894da7aaadf6a4b7758b45e/twubric.json`
-          )
-          .then((response) => {
-            this.usersList = response.data;
-          });
+        this.usersList = this.$store.getters.fetchUsersList;
       }
     },
+    removeDateFilter: function () {},
   },
+  /* async created() {
+    
+    this.usersList = await this.$store.getters.fetchUsersList;
+    console.log(this.usersList);
+  }, */
 };
 </script>
 <style scoped>
 .remove-text {
   cursor: pointer;
+  font-size: 15px;
 }
 .attributes {
   font-size: small;
@@ -136,6 +155,13 @@ export default {
 }
 .user-name,
 .total-score {
-  font-weight: 600;
+  font-weight: 550;
+  font-size: 15px;
+  color: #563d7c;
+}
+.spacing {
+  box-sizing: border-box !important;
+  border: 15px solid transparent !important;
+  background-clip: padding-box !important;
 }
 </style>
