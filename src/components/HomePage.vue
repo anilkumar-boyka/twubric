@@ -1,19 +1,27 @@
 <template>
   <div class="container px-2">
-    <b-card
-      >{{ selectedDates.startDate }}
-      <div class="mb-5">
+    <b-card>
+      <div class="mb-2">
         <div class="sort-heading">Sort By</div>
-        <b-nav card-header pills tabs fill>
+        <b-nav card-header class="row">
           <b-nav-item
+            class="col-lg-3 col-6 text-center"
             v-for="(attribute, index) in attributes"
             :key="index"
             @click="sortUserLists(attribute)"
           >
-            <span class="sort-attributes"
-              >{{ attribute }}<b-icon icon="arrow-down"></b-icon>
-              <b-icon icon="arrow-up"></b-icon
-            ></span>
+            <b-button block class="sort-attributes-buttons"
+              >{{ attribute }}
+
+              <b-icon
+                icon="arrow-down"
+                v-if="sortingInfo['sortIconDesc'][attribute.toLowerCase()]"
+              ></b-icon>
+              <b-icon
+                icon="arrow-up"
+                v-if="sortingInfo['sortIconAsc'][attribute.toLowerCase()]"
+              ></b-icon
+            ></b-button>
           </b-nav-item>
         </b-nav>
       </div>
@@ -40,7 +48,11 @@
               ></Datepicker>
             </div>
             <div class="col-lg-2 col-sm-6">
-              <b-button size="sm" variant="primary" @click="removeDateFilter"
+              <b-button
+                pill
+                size="sm"
+                class="remove-filter-button"
+                @click="removeDateFilter"
                 >Remove Filter</b-button
               >
             </div>
@@ -50,6 +62,7 @@
         <user-lists
           :selectedDates="selectedDates"
           v-model="selectedDates.endDate"
+          v-on:removeDateFilter="removeDateFilter"
           ref="usersList"
         ></user-lists>
       </div>
@@ -67,7 +80,12 @@ export default {
       attributes: ["Twubric Score", "Friends", "Influence", "Chirpiness"],
       selectedDates: { startDate: "", endDate: "" },
       endDateVisibility: true,
-      sortingInfo: { sortBy: "", sortOrder: "" },
+      sortingInfo: {
+        sortBy: "",
+        sortOrder: "",
+        sortIconDesc: {},
+        sortIconAsc: {},
+      },
       startDisabledDates: {
         from: new Date(),
       },
@@ -88,20 +106,31 @@ export default {
     },
     sortUserLists: function (name) {
       name = name.toLowerCase();
+      this.sortingInfo["sortIconDesc"] = {};
+      this.sortingInfo["sortIconAsc"] = {};
       if (
         this.sortingInfo["sortBy"] == name &&
         this.sortingInfo["sortOrder"] == "asc"
       ) {
         this.sortingInfo["sortOrder"] = "desc";
+
+        this.sortingInfo["sortIconAsc"][name] = false;
+        this.sortingInfo["sortIconDesc"][name] = true;
       } else if (
         this.sortingInfo["sortBy"] == name &&
         this.sortingInfo["sortOrder"] == "desc"
       ) {
         this.sortingInfo["sortBy"] = "";
         this.sortingInfo["sortOrder"] = "";
+
+        this.sortingInfo["sortIconAsc"][name] = false;
+        this.sortingInfo["sortIconDesc"][name] = false;
       } else {
         this.sortingInfo["sortBy"] = name;
         this.sortingInfo["sortOrder"] = "asc";
+
+        this.sortingInfo["sortIconAsc"][name] = true;
+        this.sortingInfo["sortIconDesc"][name] = false;
       }
       this.$refs.usersList.sort(this.sortingInfo);
     },
@@ -127,10 +156,16 @@ export default {
 .vdp-datepicker {
   display: inline-block;
 }
-/* .sort-attributes {
-  color: #be98f7;
-  background-color: #889eaf;
-} */
+.remove-filter-button {
+  color: #715e8d;
+  background-color: white;
+  border: 2px solid #715e8d;
+}
+
+.sort-attributes-buttons {
+  background-color: #715e8d;
+  width: -moz-available;
+}
 /* #be98f7; */
 </style>
 

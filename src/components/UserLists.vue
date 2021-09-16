@@ -36,7 +36,7 @@
           class="col-8 text-end text-danger remove-text"
           @click="removeUserFromList(user.uid)"
         >
-          Remove
+          <span class="badge badge-danger">Remove</span>
           <!--  <b-button pill size="sm" variant="danger">Remove</b-button> -->
         </div>
       </div>
@@ -75,7 +75,6 @@ export default {
   computed: {
     fetchUsersList: function () {
       this.usersList = this.$store.getters.fetchUsersList;
-      /* return this.usersList; */
     },
   },
   methods: {
@@ -95,21 +94,16 @@ export default {
       let endDateUnixTimestamp =
         new Date(this.selectedDates.endDate).getTime() / 1000;
       endDateUnixTimestamp = endDateUnixTimestamp - 32880;
-      console.log(startDateUnixTimestamp);
-      console.log(endDateUnixTimestamp);
       if (startDateUnixTimestamp && endDateUnixTimestamp) {
-        alert("apply");
         this.usersList = this.usersList.filter((e) => {
           return (
             e.join_date >= startDateUnixTimestamp &&
             e.join_date <= endDateUnixTimestamp
           );
         });
-      } /*  else if (!(startDateUnixTimestamp && endDateUnixTimestamp));
-      {
-        alert("h");
+      } else if (!(endDateUnixTimestamp && startDateUnixTimestamp)) {
         this.usersList = this.$store.getters.fetchUsersList;
-      } */
+      }
     },
     sort: function (sortInfo) {
       this.currentSortingInfo["sortByAttribute"] = sortInfo.sortBy;
@@ -130,15 +124,10 @@ export default {
         );
       } else {
         this.usersList = this.$store.getters.fetchUsersList;
+        this.$emit("removeDateFilter");
       }
     },
-    removeDateFilter: function () {},
   },
-  /* async created() {
-    
-    this.usersList = await this.$store.getters.fetchUsersList;
-    console.log(this.usersList);
-  }, */
 };
 </script>
 <style scoped>
@@ -163,5 +152,8 @@ export default {
   box-sizing: border-box !important;
   border: 15px solid transparent !important;
   background-clip: padding-box !important;
+}
+.badge-danger {
+  background-color: #df8c6b;
 }
 </style>
