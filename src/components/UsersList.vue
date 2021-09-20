@@ -37,7 +37,6 @@
           @click="removeUserFromList(user.uid)"
         >
           <span class="badge badge-danger">Remove</span>
-          <!--  <b-button pill size="sm" variant="danger">Remove</b-button> -->
         </div>
       </div>
     </div>
@@ -129,7 +128,7 @@ export default {
             ] = true;
           }
         }
-        //}
+
         if (e.keyCode === 46) {
           this.removeUserByKey(this.selectedUserDivClassIndex);
         }
@@ -205,6 +204,9 @@ export default {
         this.$emit("removeDateFilter");
       }
     },
+  },
+  destroyed: function () {
+    window.removeEventListener("keyup");
   },
 };
 </script>
