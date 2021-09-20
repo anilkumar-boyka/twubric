@@ -65,6 +65,7 @@ export default {
       },
     },
   },
+
   filters: {
     unixTostandardDateFormat: function (unixTimestamp) {
       let standardDateFormat;
@@ -73,6 +74,10 @@ export default {
       return standardDateFormat;
     },
   },
+
+  /*
+   * mounted hook to attach event listener so that user can be delete using arrow keys
+   */
   mounted() {
     window.addEventListener("keyup", (e) => {
       let totalClassesForUsers = document.querySelectorAll(".spacing").length;
@@ -136,11 +141,16 @@ export default {
     });
   },
   computed: {
+    //fetching usersList from store
     fetchUsersList: function () {
       this.usersList = this.$store.getters.fetchUsersList;
     },
   },
   methods: {
+    /**
+     * Method to remove selected user fom list
+     * @param {string} userId - using userId to get index of user to delete
+     */
     removeUserFromList: function (userId) {
       console.log(userId);
       let index = this.usersList.findIndex((element) => element.uid === userId);
@@ -151,6 +161,10 @@ export default {
         type: "success",
       });
     },
+    /**
+     * Method to remove user using keys(left,right and delete)
+     * @param {string} index- index of user to delete
+     */
     removeUserByKey: function (index) {
       if (index != null) {
         let user = this.usersList.filter((e, i) => i === index);
@@ -164,6 +178,7 @@ export default {
         );
       }
     },
+    //applying dates filter
     applyDatesFilter: function () {
       let startDateUnixTimestamp =
         new Date(this.selectedDates.startDate).getTime() / 1000;
@@ -182,6 +197,10 @@ export default {
         this.usersList = this.$store.getters.fetchUsersList;
       }
     },
+    /**
+     * Method to sort users
+     * @param {object} sortInfo - sortInfo contains all info needed to sort
+     */
     sort: function (sortInfo) {
       this.currentSortingInfo["sortByAttribute"] = sortInfo.sortBy;
       this.currentSortingInfo["sortOrder"] = sortInfo.sortOrder;
@@ -205,6 +224,7 @@ export default {
       }
     },
   },
+  //hook to destroy event listener
   destroyed: function () {
     window.removeEventListener("keyup");
   },

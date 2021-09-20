@@ -30,7 +30,7 @@
           <div class="twitter-joining">Joined Twitter Between</div>
 
           <div class="mt-2 row">
-            <div class="col-md-5">
+            <div class="col-lg-4 start-date">
               <label for="example-datepicker">Start Date :</label>
               <Datepicker
                 @selected="startDateSelected()"
@@ -38,7 +38,7 @@
                 :disabled-dates="startDisabledDates"
               ></Datepicker>
             </div>
-            <div class="col-md-5">
+            <div class="col-lg-4 end-date">
               <label for="example-datepicker">End Date :</label>
               <Datepicker
                 v-model="selectedDates.endDate"
@@ -46,7 +46,7 @@
                 :disabled-dates="endDisabledDates"
               ></Datepicker>
             </div>
-            <div class="col-lg-2 col-sm-6">
+            <div class="col-lg-2 remove-filter">
               <b-button
                 pill
                 size="sm"
@@ -96,9 +96,15 @@ export default {
     this.fetchUsers();
   },
   methods: {
+    /**
+     * Method to filter dispatch fn to fetch users list in store(vuex)
+     */
     fetchUsers: function () {
       this.$store.dispatch("fetchUsers");
     },
+    /**
+     * Method to filter users and according to date
+     */
     startDateSelected: function () {
       setTimeout(() => {
         this.endDateVisibility = false;
@@ -107,6 +113,10 @@ export default {
 
       this.endDisabledDates["from"] = new Date();
     },
+    /**
+     * Method to sort users and show sorting icons accordingly
+     * @param {string} name - attribute name to be sort.
+     */
     sortUserLists: function (name) {
       name = name.toLowerCase();
       this.sortingInfo["sortIconDesc"] = {};
@@ -137,6 +147,10 @@ export default {
       }
       this.$refs.usersList.sort(this.sortingInfo);
     },
+
+    /**
+     * Method to remove date filter
+     */
     removeDateFilter: function () {
       this.selectedDates["startDate"] = "";
       this.selectedDates["endDate"] = "";
@@ -172,5 +186,12 @@ export default {
 .sort-attributes-buttons {
   background-color: #715e8d;
   width: -moz-available;
+}
+@media screen and (max-width: 890px) {
+  .remove-filter,
+  .start-date,
+  .end-date {
+    margin-top: 12px !important;
+  }
 }
 </style>
