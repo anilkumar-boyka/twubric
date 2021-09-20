@@ -1,5 +1,5 @@
 <template>
-  <div class="container px-2">
+  <div class="container-fluid">
     <b-card class="main-card">
       <div class="mb-2">
         <div class="sort-heading">Sort By</div>
@@ -27,7 +27,7 @@
       <hr />
       <div>
         <b-card class="twitter-head-card">
-          <span class="twitter-joining">Joined Twitter Between</span>
+          <div class="twitter-joining">Joined Twitter Between</div>
 
           <div class="mt-2 row">
             <div class="col-md-5">

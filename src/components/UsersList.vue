@@ -54,10 +54,8 @@ export default {
       show: true,
       usersList: [],
       currentSortingInfo: { sortByAttribute: "", sortOrder: "" },
-      selectedUserDivClassIndex: null,
+      selectedUserDivClassIndex: 0,
       arrowKeysPressed: { left: false, right: false },
-      rightArrrowCounter: null,
-      leftArrowCounter: null,
     };
   },
   watch: {
@@ -80,44 +78,61 @@ export default {
     window.addEventListener("keyup", (e) => {
       let totalClassesForUsers = document.querySelectorAll(".spacing").length;
       let selectedClass = document.querySelectorAll(".spacing");
-      if (e.keyCode === 37) {
-        this.selectedUserDivClassIndex -= 1;
-        selectedClass[this.selectedUserDivClassIndex].style.backgroundColor =
-          "lightGrey";
-      } else if (e.keyCode === 39) {
-        if (this.selectedUserDivClassIndex < totalClassesForUsers) {
-          if (this.arrowKeysPressed["right"]) {
-            if (this.selectedUserDivClassIndex === totalClassesForUsers - 1) {
-              selectedClass[
-                this.selectedUserDivClassIndex
-              ].style.backgroundColor = "#cfc1f8";
-              this.selectedUserDivClassIndex = 0;
+      let classIndexToRemove;
+      if (this.usersList.length) {
+        if (e.keyCode === 37) {
+          if (this.arrowKeysPressed["left"]) {
+            this.selectedUserDivClassIndex =
+              this.selectedUserDivClassIndex === 0
+                ? totalClassesForUsers - 1
+                : this.selectedUserDivClassIndex - 1;
 
-              this.arrowKeysPressed["right"] = true;
-              selectedClass[
-                this.selectedUserDivClassIndex
-              ].style.backgroundColor = "lightGrey";
-            } else {
-              /*  if (this.selectedUserDivClassIndex === 0) { */
-              this.selectedUserDivClassIndex += 1;
-              selectedClass[
-                this.selectedUserDivClassIndex
-              ].style.backgroundColor = "lightGrey";
-              selectedClass[
-                this.selectedUserDivClassIndex - 1
-              ].style.backgroundColor = "#cfc1f8";
-            }
-          } else {
-            this.selectedUserDivClassIndex = 0;
-            this.arrowKeysPressed["right"] = true;
+            classIndexToRemove =
+              this.selectedUserDivClassIndex === totalClassesForUsers - 1
+                ? 0
+                : this.selectedUserDivClassIndex + 1;
+
+            selectedClass[classIndexToRemove].style.backgroundColor = "#cfc1f8";
             selectedClass[
               this.selectedUserDivClassIndex
             ].style.backgroundColor = "lightGrey";
+          } else {
+            selectedClass[
+              this.selectedUserDivClassIndex
+            ].style.backgroundColor = "lightGrey";
+
+            this.arrowKeysPressed["right"] = this.arrowKeysPressed[
+              "left"
+            ] = true;
+          }
+        } else if (e.keyCode === 39) {
+          if (this.arrowKeysPressed["right"]) {
+            this.selectedUserDivClassIndex =
+              this.selectedUserDivClassIndex === totalClassesForUsers - 1
+                ? 0
+                : this.selectedUserDivClassIndex + 1;
+            classIndexToRemove =
+              this.selectedUserDivClassIndex === 0
+                ? totalClassesForUsers - 1
+                : this.selectedUserDivClassIndex - 1;
+
+            selectedClass[classIndexToRemove].style.backgroundColor = "#cfc1f8";
+            selectedClass[
+              this.selectedUserDivClassIndex
+            ].style.backgroundColor = "lightGrey";
+          } else {
+            selectedClass[
+              this.selectedUserDivClassIndex
+            ].style.backgroundColor = "lightGrey";
+            this.arrowKeysPressed["right"] = this.arrowKeysPressed[
+              "left"
+            ] = true;
           }
         }
-      }
-      if (e.keyCode === 46) {
-        this.removeUserByKey(this.selectedUserDivClassIndex);
+        //}
+        if (e.keyCode === 46) {
+          this.removeUserByKey(this.selectedUserDivClassIndex);
+        }
       }
     });
   },
