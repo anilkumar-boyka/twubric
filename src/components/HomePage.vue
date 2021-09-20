@@ -193,5 +193,11 @@ export default {
   .end-date {
     margin-top: 12px !important;
   }
+  @media screen and (max-width: 390px) {
+    .sort-attributes-buttons {
+      min-width: 101px;
+      height: 48px;
+    }
+  }
 }
 </style>
