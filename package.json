@@ -16,6 +16,7 @@
     "axios": "^0.21.4",
     "bootstrap": "^4.6.0",
     "bootstrap-vue": "^2.21.2",
+    "v-hotkey": "^0.9.0",
     "vue": "^2.6.14",
     "vue-router": "^3.0.1",
     "vue-toast-notification": "^2.0.1",
@@ -24,6 +25,7 @@
     "vuex": "^3.6.2"
   },
   "devDependencies": {
+    "@vue/test-utils": "^1.2.2",
     "autoprefixer": "^7.1.2",
     "babel-core": "^6.22.1",
     "babel-eslint": "^8.2.1",

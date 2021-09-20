@@ -1,6 +1,6 @@
 <template>
   <div class="container px-2">
-    <b-card>
+    <b-card class="main-card">
       <div class="mb-2">
         <div class="sort-heading">Sort By</div>
         <b-nav card-header class="row">
@@ -12,7 +12,6 @@
           >
             <b-button block class="sort-attributes-buttons"
               >{{ attribute }}
-
               <b-icon
                 icon="arrow-down"
                 v-if="sortingInfo['sortIconDesc'][attribute.toLowerCase()]"
@@ -27,7 +26,7 @@
       </div>
       <hr />
       <div>
-        <b-card>
+        <b-card class="twitter-head-card">
           <span class="twitter-joining">Joined Twitter Between</span>
 
           <div class="mt-2 row">
@@ -59,22 +58,23 @@
           </div>
         </b-card>
         <hr />
-        <user-lists
+        <users-list
           :selectedDates="selectedDates"
           v-model="selectedDates.endDate"
           v-on:removeDateFilter="removeDateFilter"
           ref="usersList"
-        ></user-lists>
+        ></users-list>
       </div>
     </b-card>
   </div>
 </template>
 <script>
 import Datepicker from "vuejs-datepicker";
-import UserLists from "./UserLists.vue";
+import UsersList from "./UsersList.vue";
+import axios from "axios";
 export default {
   name: "HomePage",
-  components: { Datepicker, UserLists },
+  components: { Datepicker, UsersList },
   data() {
     return {
       attributes: ["Twubric Score", "Friends", "Influence", "Chirpiness"],
@@ -93,9 +93,12 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("fetchUsers");
+    this.fetchUsers();
   },
   methods: {
+    fetchUsers: function () {
+      this.$store.dispatch("fetchUsers");
+    },
     startDateSelected: function () {
       setTimeout(() => {
         this.endDateVisibility = false;
@@ -143,6 +146,10 @@ export default {
 };
 </script>
 <style scoped>
+.main-card,
+.twitter-head-card {
+  background-color: #cfc1f8;
+}
 .container {
   text-align: left;
 }
@@ -166,6 +173,4 @@ export default {
   background-color: #715e8d;
   width: -moz-available;
 }
-/* #be98f7; */
 </style>
-

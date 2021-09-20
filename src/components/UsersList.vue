@@ -41,8 +41,7 @@
         </div>
       </div>
     </div>
-
-    <!-- <div>No User Found!</div> -->
+    <div v-if="!usersList.length">No User Found!</div>
   </div>
 </template>
 
@@ -52,8 +51,13 @@ export default {
   props: ["selectedDates"],
   data() {
     return {
+      show: true,
       usersList: [],
       currentSortingInfo: { sortByAttribute: "", sortOrder: "" },
+      selectedUserDivClassIndex: null,
+      arrowKeysPressed: { left: false, right: false },
+      rightArrrowCounter: null,
+      leftArrowCounter: null,
     };
   },
   watch: {
@@ -72,6 +76,51 @@ export default {
       return standardDateFormat;
     },
   },
+  mounted() {
+    window.addEventListener("keyup", (e) => {
+      let totalClassesForUsers = document.querySelectorAll(".spacing").length;
+      let selectedClass = document.querySelectorAll(".spacing");
+      if (e.keyCode === 37) {
+        this.selectedUserDivClassIndex -= 1;
+        selectedClass[this.selectedUserDivClassIndex].style.backgroundColor =
+          "lightGrey";
+      } else if (e.keyCode === 39) {
+        if (this.selectedUserDivClassIndex < totalClassesForUsers) {
+          if (this.arrowKeysPressed["right"]) {
+            if (this.selectedUserDivClassIndex === totalClassesForUsers - 1) {
+              selectedClass[
+                this.selectedUserDivClassIndex
+              ].style.backgroundColor = "#cfc1f8";
+              this.selectedUserDivClassIndex = 0;
+
+              this.arrowKeysPressed["right"] = true;
+              selectedClass[
+                this.selectedUserDivClassIndex
+              ].style.backgroundColor = "lightGrey";
+            } else {
+              /*  if (this.selectedUserDivClassIndex === 0) { */
+              this.selectedUserDivClassIndex += 1;
+              selectedClass[
+                this.selectedUserDivClassIndex
+              ].style.backgroundColor = "lightGrey";
+              selectedClass[
+                this.selectedUserDivClassIndex - 1
+              ].style.backgroundColor = "#cfc1f8";
+            }
+          } else {
+            this.selectedUserDivClassIndex = 0;
+            this.arrowKeysPressed["right"] = true;
+            selectedClass[
+              this.selectedUserDivClassIndex
+            ].style.backgroundColor = "lightGrey";
+          }
+        }
+      }
+      if (e.keyCode === 46) {
+        this.removeUserByKey(this.selectedUserDivClassIndex);
+      }
+    });
+  },
   computed: {
     fetchUsersList: function () {
       this.usersList = this.$store.getters.fetchUsersList;
@@ -79,6 +128,7 @@ export default {
   },
   methods: {
     removeUserFromList: function (userId) {
+      console.log(userId);
       let index = this.usersList.findIndex((element) => element.uid === userId);
       let name = this.usersList[index].username;
       this.usersList.splice(index, 1);
@@ -86,6 +136,19 @@ export default {
         duration: 1500,
         type: "success",
       });
+    },
+    removeUserByKey: function (index) {
+      if (index != null) {
+        let user = this.usersList.filter((e, i) => i === index);
+        this.usersList.splice(index, 1);
+        this.$toasted.show(
+          `User "${user[0].username}" has been removed successfully!`,
+          {
+            duration: 1500,
+            type: "success",
+          }
+        );
+      }
     },
     applyDatesFilter: function () {
       let startDateUnixTimestamp =
@@ -152,6 +215,9 @@ export default {
   box-sizing: border-box !important;
   border: 15px solid transparent !important;
   background-clip: padding-box !important;
+}
+.border {
+  border: 1px solid #715e8d !important;
 }
 .badge-danger {
   background-color: #df8c6b;
